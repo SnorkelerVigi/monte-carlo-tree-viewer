@@ -28,7 +28,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   index = 0, 
   isLastChild = false 
 }) => {
-  const [expanded, setExpanded] = useState(depth === 0);
+  // Change default expanded state to true for all nodes
+  const [expanded, setExpanded] = useState(true);
   const hasChildren = node.children && node.children.length > 0;
   const nodeRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
