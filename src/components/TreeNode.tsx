@@ -84,22 +84,28 @@ const TreeNode: React.FC<TreeNodeProps> = ({
     <div 
       className={cn(
         "relative animate-node-enter",
-        { "ml-6 mt-4": depth > 0 }
+        { "ml-6 mt-6": depth > 0 }
       )}
       style={{ 
         animationDelay: `${depth * 0.1 + index * 0.05}s`,
       }}
     >
-      {/* Node connector line to parent */}
+      {/* Vertical connector line from parent to current node */}
       {depth > 0 && (
-        <div className="absolute w-[2px] bg-slate-200 top-0 left-[-20px] h-full" 
-             style={{ top: '-20px' }}>
-        </div>
+        <div 
+          className="absolute w-[2px] bg-slate-200 left-[-20px]" 
+          style={{ 
+            top: '-24px',
+            height: '24px' 
+          }}
+        />
       )}
 
       {/* Horizontal connector line */}
       {depth > 0 && (
-        <div className="absolute h-[2px] bg-slate-200 top-[28px] left-[-20px] w-[20px]"></div>
+        <div 
+          className="absolute h-[2px] bg-slate-200 top-[28px] left-[-20px] w-[20px]"
+        />
       )}
 
       {/* Main node content */}
@@ -193,12 +199,23 @@ const TreeNode: React.FC<TreeNodeProps> = ({
         )}
       </div>
 
-      {/* Children nodes */}
+      {/* Children nodes - vertical tree layout */}
       {hasChildren && expanded && (
         <div 
           ref={nodeRef}
-          className="pl-4 overflow-hidden"
+          className="overflow-hidden relative"
         >
+          {/* Connector line for child nodes */}
+          {node.children.length > 1 && (
+            <div 
+              className="absolute w-[2px] bg-slate-200 left-[-20px]" 
+              style={{ 
+                top: '0', 
+                height: `calc(100% - ${isLastChild ? '0px' : '54px'})` 
+              }}
+            />
+          )}
+          
           {node.children.map((childNode, childIndex) => (
             <TreeNode
               key={childIndex}

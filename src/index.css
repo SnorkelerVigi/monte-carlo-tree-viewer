@@ -96,6 +96,8 @@
 
   .node-container {
     transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 100%;
+    max-width: 600px;
   }
   
   .node-connector {
@@ -113,5 +115,13 @@
   .node-collapsed .node-connector {
     height: 0;
     opacity: 0;
+  }
+  
+  /* Tree visualization specific styles */
+  .tree-content {
+    min-width: 800px;
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: 50px;
   }
 }

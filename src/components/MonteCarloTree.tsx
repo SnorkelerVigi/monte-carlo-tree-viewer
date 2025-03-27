@@ -92,8 +92,13 @@ const MonteCarloTree: React.FC<MonteCarloTreeProps> = ({ data, className }) => {
       {/* Tree container with scaling */}
       {expanded && (
         <div 
-          className="tree-content p-4 transition-transform duration-300 animate-fade-in" 
-          style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
+          className="tree-content p-6 transition-transform duration-300 animate-fade-in" 
+          style={{ 
+            transform: `scale(${scale})`, 
+            transformOrigin: 'top center',
+            width: 'fit-content',
+            margin: '0 auto'
+          }}
         >
           <TreeNode node={data} depth={0} />
         </div>
