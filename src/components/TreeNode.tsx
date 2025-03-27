@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, ExpandIcon, MinimizeIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 type NodeData = {
@@ -30,11 +30,12 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 }) => {
   // Change default expanded state to true for all nodes
   const [expanded, setExpanded] = useState(true);
+  const [showFullText, setShowFullText] = useState(false);
   const hasChildren = node.children && node.children.length > 0;
   const nodeRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   
-  // Format Monte Carlo score as percentage
+  // Format the actual mc_value as percentage
   const mcScorePercentage = Math.round(node.mc_value * 100);
   
   // Calculate accuracy
@@ -67,9 +68,15 @@ const TreeNode: React.FC<TreeNodeProps> = ({
     setExpanded(!expanded);
   };
 
+  // Toggle full text display
+  const toggleFullText = () => {
+    setShowFullText(!showFullText);
+  };
+
   // To display content properly with potential truncation
   const displayContent = node.content || node.text || '';
-  const truncatedContent = displayContent.length > 150 
+  const isTextLong = displayContent.length > 150;
+  const truncatedContent = isTextLong && !showFullText
     ? `${displayContent.substring(0, 150)}...` 
     : displayContent;
 
@@ -131,9 +138,9 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                 "text-xs border px-2 py-0.5 rounded-full",
                 getScoreColor(mcScorePercentage)
               )}
-              title="Monte Carlo Score"
+              title="Monte Carlo Value"
             >
-              Score: {mcScorePercentage}%
+              Score: {mcScorePercentage}% ({node.mc_value.toFixed(2)})
             </span>
             
             <span 
@@ -154,17 +161,34 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             <span className="font-medium">Visits:</span> {node.visit_count}
           </div>
           <div>
-            <span className="font-medium">Incorrect:</span> {node.incorrect_rollouts}
+            <span className="font-medium">Incorrect:</span> {node.incorrect_rollouts}/{node.total_rollouts}
           </div>
         </div>
         
         {/* Node content */}
         {displayContent && (
-          <div
-            ref={contentRef}
-            className="mt-2 p-3 bg-slate-50 rounded border border-slate-100 text-sm text-slate-700 max-h-[200px] overflow-auto"
-          >
-            {truncatedContent}
+          <div className="relative">
+            <div
+              ref={contentRef}
+              className="mt-2 p-3 bg-slate-50 rounded border border-slate-100 text-sm text-slate-700 max-h-[200px] overflow-auto"
+            >
+              {truncatedContent}
+            </div>
+            
+            {/* Show expand/collapse button only if text is long */}
+            {isTextLong && (
+              <button
+                onClick={toggleFullText}
+                className="absolute bottom-2 right-2 p-1 rounded-full bg-white border shadow-sm hover:bg-slate-50 transition-colors"
+                aria-label={showFullText ? "Show less" : "Show more"}
+                title={showFullText ? "Show less" : "Show more"}
+              >
+                {showFullText ? 
+                  <MinimizeIcon className="h-3.5 w-3.5 text-slate-500" /> : 
+                  <ExpandIcon className="h-3.5 w-3.5 text-slate-500" />
+                }
+              </button>
+            )}
           </div>
         )}
       </div>
